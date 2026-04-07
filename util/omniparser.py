@@ -30,3 +30,16 @@ class Omniparser(object):
         dino_labled_img, label_coordinates, parsed_content_list = get_som_labeled_img(image, self.som_model, BOX_TRESHOLD = self.config['BOX_TRESHOLD'], output_coord_in_ratio=True, ocr_bbox=ocr_bbox,draw_bbox_config=draw_bbox_config, caption_model_processor=self.caption_model_processor, ocr_text=text,use_local_semantics=True, iou_threshold=0.7, scale_img=False, batch_size=128)
 
         return dino_labled_img, parsed_content_list
+
+    def parse_from_file(self, image_path: str):
+        """
+        从文件路径解析图片
+
+        Args:
+            image_path: 图片文件路径
+
+        Returns:
+            (dino_labled_img_base64, parsed_content_list)
+        """
+        image_base64 = base64.b64encode(open(image_path, 'rb').read()).decode('utf-8')
+        return self.parse(image_base64)
