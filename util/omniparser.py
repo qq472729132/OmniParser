@@ -7,11 +7,15 @@ from typing import Dict
 class Omniparser(object):
     def __init__(self, config: Dict):
         self.config = config
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        # 支持从 config 获取设备，或默认 MPS > CPU
+        if 'device' in config:
+            device = config['device']
+        else:
+            device = "mps" if torch.backends.mps.is_available() else "cpu"
 
         self.som_model = get_yolo_model(model_path=config['som_model_path'])
         self.caption_model_processor = get_caption_model_processor(model_name=config['caption_model_name'], model_name_or_path=config['caption_model_path'], device=device)
-        print('Omniparser initialized!!!')
+        print(f'Omniparser initialized on {device}!')
 
     def parse(self, image_base64: str):
         image_bytes = base64.b64decode(image_base64)
